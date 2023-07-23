@@ -8,8 +8,17 @@ const Demo = () => {
     url: "",
     summary: "",
   });
+  const [allArticles, setAllArticles] = useState([]);
 
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
+
+  useEffect(() => {
+    const localStorageArticles = JSON.parse(localStorage.getItem('articles'));
+
+    if (localStorageArticles) {
+      setAllArticles(localStorageArticles);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -17,7 +26,11 @@ const Demo = () => {
 
     if (data?.summary) {
       const newArticle = { ...article, summary: data.summary }
+      const updatedAllArticles = [newArticle, ...allArticles];
       setArticle(newArticle);
+      setAllArticles(updatedAllArticles);
+
+      localStorage.setItem('articles', JSON.stringify(updatedAllArticles));
     }
   };
 
