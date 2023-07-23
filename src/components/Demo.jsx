@@ -8,12 +8,16 @@ const Demo = () => {
     url: "",
     summary: "",
   });
-  const [allArticles, setAllArticles] = useState([]);
+  const [allArticles, setAllArticles] = useState([
+    { url: "http://localhost:1234/", summary: "lorem ipsum dolor asit met" },
+    { url: "http://localhost:5678/", summary: "lorem ipsum dolor asit met" },
+    { url: "http://localhost:9999/", summary: "lorem ipsum dolor asit met" },
+  ]);
 
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
 
   useEffect(() => {
-    const localStorageArticles = JSON.parse(localStorage.getItem('articles'));
+    const localStorageArticles = JSON.parse(localStorage.getItem("articles"));
 
     if (localStorageArticles) {
       setAllArticles(localStorageArticles);
@@ -21,16 +25,16 @@ const Demo = () => {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const { data } = await getSummary({ articleUrl: article.url });
 
     if (data?.summary) {
-      const newArticle = { ...article, summary: data.summary }
+      const newArticle = { ...article, summary: data.summary };
       const updatedAllArticles = [newArticle, ...allArticles];
       setArticle(newArticle);
       setAllArticles(updatedAllArticles);
 
-      localStorage.setItem('articles', JSON.stringify(updatedAllArticles));
+      localStorage.setItem("articles", JSON.stringify(updatedAllArticles));
     }
   };
 
@@ -66,6 +70,26 @@ const Demo = () => {
         </form>
 
         {/* Browser URL History */}
+        <div className="flex flex-col gap-1 max-h-60 overflow-y-auto">
+          {allArticles.map((item, i) => (
+            <div
+              key={`link-${i}`}
+              onClick={() => setArticle(item)}
+              className="link_card"
+            >
+              <div className="copy_btn">
+                <img
+                  src={copy}
+                  alt="copy_icon"
+                  className="w-[40%] h-[40%] object-contain"
+                />
+              </div>
+              <p className="flex-1 font-satoshi text-indigo-700 font-medium text-sm truncate">
+                {item.url}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Display Results */}
